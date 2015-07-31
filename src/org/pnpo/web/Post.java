@@ -1,4 +1,4 @@
-package web;
+package org.pnpo.web;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -11,7 +11,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.PooledConnection;
 
 public class Post extends HttpServlet {
 	private static final long serialVersionUID = 8808293686192061803L;
@@ -22,28 +21,27 @@ public class Post extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 
 		if (request.getParameter("data") != null && !request.getParameter("data").equals("")) {
+			Connection connection = null;
 			try {
-				PooledConnection pooledConnection = null;
-				pooledConnection = Database.getConnection();
-
-				Connection connection = pooledConnection.getConnection();
+				connection = Database.getConnection();
 
 				Statement statement = connection.createStatement();
 
-				statement.executeQuery("SELECT MAX(id) FROM web_data");
+				statement.executeQuery("SELECT MAX(id) FROM pnpo_message");
 
 				ResultSet resultSet = statement.getResultSet();
 
 				resultSet.next();
 
 				int id = resultSet.getInt(1) + 1;
-				
+
 				String data = request.getParameter("data");
-				
+
 				resultSet.close();
 				statement.close();
 
-				PreparedStatement preparedStatement = connection.prepareStatement("INSERT INTO web_data VALUES(?, ?)");
+				PreparedStatement preparedStatement = connection
+						.prepareStatement("INSERT INTO pnpo_message VALUES(?, ?)");
 
 				preparedStatement.setInt(1, id);
 				preparedStatement.setBytes(2, data.getBytes("UTF-8"));
@@ -54,13 +52,23 @@ public class Post extends HttpServlet {
 
 				connection.commit();
 
-				pooledConnection.close();
 
 			} catch (SQLException e) {
+				try {
+					connection.rollback();
+				} catch (SQLException e1) {
+					e1.printStackTrace();
+				}
 				throw new ServletException(e);
+			}finally {
+				try {
+					connection.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			}
 		}
-		
+
 		response.sendRedirect("");
 	}
 

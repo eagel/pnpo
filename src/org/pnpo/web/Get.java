@@ -1,4 +1,4 @@
-package web;
+package org.pnpo.web;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -14,7 +14,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.sql.PooledConnection;
 
 public class Get extends HttpServlet {
 	private static final long serialVersionUID = 3375775372535909378L;
@@ -22,15 +21,13 @@ public class Get extends HttpServlet {
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		Connection connection = null;
 		try {
-			PooledConnection pooledConnection = null;
-			pooledConnection = Database.getConnection();
-
-			Connection connection = pooledConnection.getConnection();
+			connection = Database.getConnection();
 
 			Statement statement = connection.createStatement();
 
-			statement.executeQuery("SELECT * FROM web_data ORDER BY id DESC LIMIT 1000");
+			statement.executeQuery("SELECT * FROM pnpo_message ORDER BY id DESC LIMIT 1000");
 
 			ResultSet resultSet = statement.getResultSet();
 
@@ -49,10 +46,19 @@ public class Get extends HttpServlet {
 
 			connection.commit();
 
-			pooledConnection.close();
-
 		} catch (SQLException e) {
+			try {
+				connection.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			throw new ServletException(e);
+		} finally {
+			try {
+				connection.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		request.getRequestDispatcher("WEB-INF/pages/get.jsp").forward(request, response);
 	}

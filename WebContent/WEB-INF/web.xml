@@ -3,15 +3,15 @@
   <display-name>pnpo</display-name>
   <servlet>
     <servlet-name>get</servlet-name>
-    <servlet-class>web.Get</servlet-class>
+    <servlet-class>org.pnpo.web.Get</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>post</servlet-name>
-    <servlet-class>web.Post</servlet-class>
+    <servlet-class>org.pnpo.web.Post</servlet-class>
   </servlet>
   <servlet>
     <servlet-name>database</servlet-name>
-    <servlet-class>web.Database</servlet-class>
+    <servlet-class>org.pnpo.web.Database</servlet-class>
     <load-on-startup>1</load-on-startup>
   </servlet>
   <servlet-mapping>
