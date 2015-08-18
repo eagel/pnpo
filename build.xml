@@ -12,13 +12,38 @@
 			</classpath>
 		</javac>
 		<!--Package war file -->
-		<war destfile="build/root.war" basedir="WebContent"/>
+		<war destfile="build/root.war" basedir="WebContent" />
 	</target>
-	
+
+	<target name="test" depends="all">
+		<!--Create class file folder -->
+		<mkdir dir="build/test" />
+		<!--Compile sources -->
+		<javac srcdir="test" destdir="build/test" includeantruntime="false">
+			<classpath>
+				<fileset dir="lib" />
+				<fileset dir="WebContent/WEB-INF/lib" />
+				<path location="WebContent/WEB-INF/classes" />
+			</classpath>
+		</javac>
+		<!--Execute test case -->
+		<junit printsummary="true">
+			<classpath>
+				<fileset dir="lib" />
+				<fileset dir="WebContent/WEB-INF/lib" />
+				<path location="WebContent/WEB-INF/classes" />
+				<path location="build/test" />
+			</classpath>
+			<test name="org.pnpo.TestMain" />
+		</junit>
+	</target>
+
 	<target name="clean">
 		<!--Delete the root.war file -->
-		<delete file="build/root.war"/>
+		<delete file="build/root.war" />
 		<!--Delete the class file folder -->
-		<delete dir="WebContent/WEB-INF/classes"/>
+		<delete dir="WebContent/WEB-INF/classes" />
+		<!--Delete the test class file folder -->
+		<delete dir="build/test" />
 	</target>
 </project>
