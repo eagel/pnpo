@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<project default="all">
+	<target name="all">
+		<!--Create class file folder -->
+		<mkdir dir="WebContent/WEB-INF/classes" />
+		<!--Compile sources -->
+		<javac srcdir="src" destdir="WebContent/WEB-INF/classes" includeantruntime="false">
+			<classpath>
+				<fileset dir="lib" />
+				<fileset dir="WebContent/WEB-INF/lib" />
+			</classpath>
+		</javac>
+		<!--Package war file -->
+		<war destfile="build/root.war" basedir="WebContent"/>
+	</target>
+	
+	<target name="clean">
+		<!--Delete the root.war file -->
+		<delete file="build/root.war"/>
+		<!--Delete the class file folder -->
+		<delete dir="WebContent/WEB-INF/classes"/>
+	</target>
+</project>
