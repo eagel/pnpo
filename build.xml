@@ -38,6 +38,20 @@
 		</junit>
 	</target>
 
+	<target name="doc">
+		<!--Create java doc folder -->
+		<mkdir dir="build/javadoc" />
+		<!--Compile java doc -->
+		<javadoc destdir="build/javadoc" charset="UTF-8">
+			<sourcepath location="src" />
+			<sourcepath location="test" />
+			<classpath>
+				<fileset dir="lib" />
+				<fileset dir="WebContent/WEB-INF/lib" />
+			</classpath>
+		</javadoc>
+	</target>
+
 	<target name="clean">
 		<!--Delete the root.war file -->
 		<delete file="build/root.war" />
@@ -45,5 +59,7 @@
 		<delete dir="WebContent/WEB-INF/classes" />
 		<!--Delete the test class file folder -->
 		<delete dir="build/test" />
+		<!--Delete the java doc folder -->
+		<delete dir="build/javadoc" />
 	</target>
 </project>
