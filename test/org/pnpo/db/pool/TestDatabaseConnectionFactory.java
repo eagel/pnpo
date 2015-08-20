@@ -29,5 +29,12 @@ public class TestDatabaseConnectionFactory {
 			connection.close();
 		} catch (SQLException e) {
 		}
+		
+		try {
+			connection.createStatement();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 }

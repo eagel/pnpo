@@ -19,334 +19,402 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
-public class DatabaseWrappedConnection implements Connection{
+public class DatabaseWrappedConnection implements Connection {
+	private DatabasePooledConnection pooledConnection;
+
+	public DatabaseWrappedConnection(DatabasePooledConnection pooledConnection) {
+		this.pooledConnection = pooledConnection;
+	}
 
 	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		return pooledConnection.getConnection().unwrap(iface);
 	}
 
 	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		check();
+		return pooledConnection.getConnection().isWrapperFor(iface);
 	}
 
 	@Override
 	public Statement createStatement() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createStatement();
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql);
 	}
 
 	@Override
 	public CallableStatement prepareCall(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareCall(sql);
 	}
 
 	@Override
 	public String nativeSQL(String sql) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().nativeSQL(sql);
 	}
 
 	@Override
 	public void setAutoCommit(boolean autoCommit) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setAutoCommit(autoCommit);
 	}
 
 	@Override
 	public boolean getAutoCommit() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getAutoCommit();
 	}
 
 	@Override
 	public void commit() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().commit();
 	}
 
 	@Override
 	public void rollback() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().rollback();
 	}
 
 	@Override
 	public void close() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		this.pooledConnection.idle();
+		this.pooledConnection = null;
 	}
 
 	@Override
 	public boolean isClosed() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		return pooledConnection == null ? false : true;
 	}
 
 	@Override
 	public DatabaseMetaData getMetaData() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getMetaData();
 	}
 
 	@Override
 	public void setReadOnly(boolean readOnly) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setReadOnly(true);
 	}
 
 	@Override
 	public boolean isReadOnly() throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().isReadOnly();
 	}
 
 	@Override
 	public void setCatalog(String catalog) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setCatalog(catalog);
 	}
 
 	@Override
 	public String getCatalog() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getCatalog();
 	}
 
 	@Override
 	public void setTransactionIsolation(int level) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setTransactionIsolation(level);
 	}
 
 	@Override
 	public int getTransactionIsolation() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getTransactionIsolation();
 	}
 
 	@Override
 	public SQLWarning getWarnings() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getWarnings();
 	}
 
 	@Override
 	public void clearWarnings() throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().clearWarnings();
 	}
 
 	@Override
 	public Statement createStatement(int resultSetType, int resultSetConcurrency) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createStatement(resultSetType, resultSetConcurrency);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql, resultSetType, resultSetConcurrency);
 	}
 
 	@Override
 	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareCall(sql, resultSetType, resultSetConcurrency);
 	}
 
 	@Override
 	public Map<String, Class<?>> getTypeMap() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		return pooledConnection.getConnection().getTypeMap();
 	}
 
 	@Override
 	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.getConnection().setTypeMap(map);
 	}
 
 	@Override
 	public void setHoldability(int holdability) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setHoldability(holdability);
 	}
 
 	@Override
 	public int getHoldability() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getHoldability();
 	}
 
 	@Override
 	public Savepoint setSavepoint() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().setSavepoint();
 	}
 
 	@Override
 	public Savepoint setSavepoint(String name) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().setSavepoint(name);
 	}
 
 	@Override
 	public void rollback(Savepoint savepoint) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().rollback(savepoint);
 	}
 
 	@Override
 	public void releaseSavepoint(Savepoint savepoint) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().releaseSavepoint(savepoint);
 	}
 
 	@Override
 	public Statement createStatement(int resultSetType, int resultSetConcurrency, int resultSetHoldability)
 			throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createStatement(resultSetType, resultSetConcurrency,
+				resultSetHoldability);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, int resultSetType, int resultSetConcurrency,
 			int resultSetHoldability) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql, resultSetType, resultSetConcurrency,
+				resultSetHoldability);
 	}
 
 	@Override
 	public CallableStatement prepareCall(String sql, int resultSetType, int resultSetConcurrency,
 			int resultSetHoldability) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareCall(sql, resultSetType, resultSetConcurrency,
+				resultSetHoldability);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, int autoGeneratedKeys) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql, autoGeneratedKeys);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, int[] columnIndexes) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql, columnIndexes);
 	}
 
 	@Override
 	public PreparedStatement prepareStatement(String sql, String[] columnNames) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().prepareStatement(sql, columnNames);
 	}
 
 	@Override
 	public Clob createClob() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createClob();
 	}
 
 	@Override
 	public Blob createBlob() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createBlob();
 	}
 
 	@Override
 	public NClob createNClob() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createNClob();
 	}
 
 	@Override
 	public SQLXML createSQLXML() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createSQLXML();
 	}
 
 	@Override
 	public boolean isValid(int timeout) throws SQLException {
-		// TODO Auto-generated method stub
-		return false;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().isValid(timeout);
 	}
 
 	@Override
 	public void setClientInfo(String name, String value) throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-		
+		try {
+			check();
+		} catch (SQLException e) {
+			throw new SQLClientInfoException();
+		}
+		pooledConnection.touch();
+		pooledConnection.getConnection().setClientInfo(name, value);
 	}
 
 	@Override
 	public void setClientInfo(Properties properties) throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-		
+		try {
+			check();
+		} catch (SQLException e) {
+			throw new SQLClientInfoException();
+		}
+		pooledConnection.touch();
+		pooledConnection.getConnection().setClientInfo(properties);
 	}
 
 	@Override
 	public String getClientInfo(String name) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getClientInfo(name);
 	}
 
 	@Override
 	public Properties getClientInfo() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getClientInfo();
 	}
 
 	@Override
 	public Array createArrayOf(String typeName, Object[] elements) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createArrayOf(typeName, elements);
 	}
 
 	@Override
 	public Struct createStruct(String typeName, Object[] attributes) throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().createStruct(typeName, attributes);
 	}
 
 	@Override
 	public void setSchema(String schema) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setSchema(schema);
 	}
 
 	@Override
 	public String getSchema() throws SQLException {
-		// TODO Auto-generated method stub
-		return null;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getSchema();
 	}
 
 	@Override
 	public void abort(Executor executor) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		close();
 	}
 
 	@Override
 	public void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
-		// TODO Auto-generated method stub
-		
+		check();
+		pooledConnection.touch();
+		pooledConnection.getConnection().setNetworkTimeout(executor, milliseconds);
 	}
 
 	@Override
 	public int getNetworkTimeout() throws SQLException {
-		// TODO Auto-generated method stub
-		return 0;
+		check();
+		pooledConnection.touch();
+		return pooledConnection.getConnection().getNetworkTimeout();
+	}
+
+	private void check() throws SQLException {
+		if (pooledConnection == null) {
+			throw new SQLException("connection closed");
+		}
 	}
 
 }
