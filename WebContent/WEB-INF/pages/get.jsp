@@ -2,9 +2,10 @@
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
 <html>
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<meta name="Content-Type" content="text/html; charset=UTF-8">
 <title>来吧！匿名吐槽</title>
 </head>
 <body>
