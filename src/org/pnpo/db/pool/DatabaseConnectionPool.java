@@ -58,6 +58,9 @@ public class DatabaseConnectionPool {
 	/**
 	 * Create a DatabaseConnectionPool and configure a default
 	 * DatabaseConnectionFactory.
+	 * 
+	 * @param maxConnectionSize
+	 *            The max content size
 	 */
 	public DatabaseConnectionPool(int maxConnectionSize) {
 		this.databaseConnectionFactory = new DatabaseConnectionFactory();
@@ -70,6 +73,8 @@ public class DatabaseConnectionPool {
 	/**
 	 * Create a DatabaseConnectionPool
 	 * 
+	 * @param maxConnectionSize
+	 *            the max content size
 	 * @param databaseConnectionFactory
 	 *            The DatabaseConnectionFactory for creating JDBC connection.
 	 */
@@ -307,27 +312,27 @@ public class DatabaseConnectionPool {
 			autoCommit = connection.getAutoCommit();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			transactionIsolation = connection.getTransactionIsolation();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			readOnly = connection.isReadOnly();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			catalog = connection.getCatalog();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			schema = connection.getSchema();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			typeMap = connection.getTypeMap();
 		} catch (SQLFeatureNotSupportedException e) {
@@ -342,7 +347,7 @@ public class DatabaseConnectionPool {
 			clientInfo = connection.getClientInfo();
 		} catch (SQLFeatureNotSupportedException e) {
 		}
-		
+
 		try {
 			networkTimeout = connection.getNetworkTimeout();
 		} catch (SQLFeatureNotSupportedException e) {
