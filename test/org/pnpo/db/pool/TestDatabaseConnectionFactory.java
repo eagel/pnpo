@@ -24,10 +24,11 @@ public class TestDatabaseConnectionFactory {
 			e.printStackTrace();
 			Assert.fail(e.getMessage());
 		}
-		
+
 		try {
 			connection.close();
 		} catch (SQLException e) {
 		}
+
 	}
 }
