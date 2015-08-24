@@ -1,3 +1,4 @@
+<%@page import="org.pnpo.PNPO"%>
 <%@page import="java.util.Map"%>
 <%@page import="java.util.List"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
@@ -12,10 +13,10 @@
 	<div
 		style="width: 1024px; margin: 25px auto 25px auto; padding: 2px; border: solid 1px #7777AA;">
 		<form action="post" method="post"
-			style="border: solid 1px black; padding: 5px; text-align: center; margin: 5px; ">
+			style="border: solid 1px black; padding: 5px; text-align: center; margin: 5px;">
 			<label for="data">消息:</label> <input id="data" name="data"
-				type="text" style="width: 900px; background: blue;"> <input type="submit"
-				value="发送" />
+				type="text" style="width: 900px; background: blue;"> <input
+				type="submit" value="发送" />
 		</form>
 		<script type="text/javascript">
 			document.getElementById('data').focus();
@@ -31,5 +32,15 @@
 			}
 		%>
 	</div>
+	<footer style="width: 1024px; margin: 0px auto 0px auto">
+		<div style="display: block; float: left;">
+			<a href="https://github.com/eagel/pnpo/wiki">PNPO Open source
+				project</a>
+		</div>
+		<div style="display: block; float: right;">
+			VERSION:
+			<%=PNPO.VERSION%></div>
+		<div style="clear: both;"></div>
+	</footer>
 </body>
 </html>
