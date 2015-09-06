@@ -5,7 +5,7 @@ import org.junit.runners.Suite;
 import org.pnpo.db.pool.DatabaseConnnectionPoolTests;
 
 @RunWith(Suite.class)
-@Suite.SuiteClasses({ DatabaseConnnectionPoolTests.class })
+@Suite.SuiteClasses({ DatabaseConnnectionPoolTests.class, TestPNPO.class })
 public class TestMain {
 
 }
