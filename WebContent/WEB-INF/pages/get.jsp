@@ -34,11 +34,11 @@
 	</div>
 	<footer style="width: 1024px; margin: 0px auto 0px auto">
 		<div style="display: block; float: left;">
-			<a href="https://github.com/eagel/pnpo/wiki">PNPO Open source
-				project</a>
+			<a href="https://github.com/eagel/pnpo/wiki">PNPO Open Source
+				Project</a>
 		</div>
 		<div style="display: block; float: right;">
-			VERSION:
+			Version:&nbsp;
 			<%=PNPO.VERSION%></div>
 		<div style="clear: both;"></div>
 	</footer>
