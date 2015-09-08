@@ -106,9 +106,9 @@ public class DatabasePooledConnection {
 			this.wrappedConnection = null;
 			this.status = Status.DEAD;
 		}
-		pool.idle(this);
 		this.wrappedConnection = null;
 		this.status = Status.IDLE;
+		pool.idle(this);
 	}
 
 	public void busy() throws IllegalStateException {

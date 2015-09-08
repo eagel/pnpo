@@ -53,7 +53,7 @@ public class DatabaseConnectionPool {
 	private Condition hasIdleConnection = connectionLock.newCondition();
 	private Condition terminatedCondition = connectionLock.newCondition();
 	private int maxConnectionSize;
-	private int maxIdleTime = 180000;
+	private long maxIdleTime = 180000;
 
 	/**
 	 * Create a DatabaseConnectionPool and configure a default
@@ -103,7 +103,7 @@ public class DatabaseConnectionPool {
 		this.maxConnectionSize = maxConnectionSize;
 	}
 
-	public void setMaxIdleTime(int maxIdleTime) {
+	public void setMaxIdleTime(long maxIdleTime) {
 		if (Status.CREATED.equals(status)) {
 			throw new IllegalStateException();
 		}
@@ -170,12 +170,15 @@ public class DatabaseConnectionPool {
 	}
 
 	public Connection getConnection() throws InterruptedException, IllegalStateException, SQLException {
-		return getConnection(0);
+		return getConnection(0, null);
 	}
 
-	public Connection getConnection(int timeout) throws SQLException, InterruptedException, IllegalStateException {
+	public Connection getConnection(long timeout, TimeUnit unit)
+			throws SQLException, InterruptedException, IllegalStateException {
 		connectionLock.lock();
 		DatabaseWrappedConnection wrappedConnection = null;
+		long begin = System.nanoTime();
+
 		try {
 			while (wrappedConnection == null) {
 				DatabasePooledConnection pooledConnection = null;
@@ -188,8 +191,13 @@ public class DatabaseConnectionPool {
 					if ((idleConnections.size() + busyConnections.size()) < maxConnectionSize) {
 						fillConnections();
 					} else {
-						if (!hasIdleConnection.await(timeout, TimeUnit.MILLISECONDS)) {
-							break;
+						if (timeout > 0) {
+							if (!hasIdleConnection.await(begin + unit.toNanos(timeout) - System.nanoTime(),
+									TimeUnit.NANOSECONDS)) {
+								throw new SQLException("Timeout");
+							}
+						} else {
+							hasIdleConnection.await();
 						}
 					}
 				}
@@ -260,6 +268,15 @@ public class DatabaseConnectionPool {
 		}
 	}
 
+	/**
+	 * 
+	 * @param timeout
+	 *            the time out less or equal than 0 means wait for ever.
+	 * @param unit
+	 * @return if terminated return true. Timeout return false.
+	 * @throws InterruptedException
+	 * @throws IllegalStateException
+	 */
 	public boolean awaitTermination(long timeout, TimeUnit unit) throws InterruptedException, IllegalStateException {
 		if (Status.TERMINATED.equals(status)) {
 			return true;
@@ -270,7 +287,12 @@ public class DatabaseConnectionPool {
 
 		connectionLock.lock();
 		try {
-			return terminatedCondition.await(timeout, unit);
+			if (timeout > 0) {
+				return terminatedCondition.await(timeout, unit);
+			} else {
+				terminatedCondition.await();
+				return true;
+			}
 		} finally {
 			connectionLock.unlock();
 		}
