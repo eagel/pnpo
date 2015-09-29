@@ -160,11 +160,18 @@ public class TestDatabaseConnectionPool {
 
 		AtomicInteger count = new AtomicInteger(0);
 
-		CountDownLatch latch = new CountDownLatch(20);
+		CountDownLatch latch = new CountDownLatch(100);
 
 		pool.startup();
 
-		for (int i = 0; i < 20; i++) {
+		Connection c = pool.getConnection();
+		c.setAutoCommit(false);
+		PreparedStatement preparedStatement = c
+				.prepareStatement("CREATE TABLE IF NOT EXISTS pnpo_test(id int primary key, name varchar(256))");
+		preparedStatement.execute();
+		c.close();
+
+		for (int i = 0; i < 100; i++) {
 			executorService.execute(new Runnable() {
 				public void run() {
 					Connection c = null;
@@ -172,7 +179,7 @@ public class TestDatabaseConnectionPool {
 						c = pool.getConnection();
 						c.setAutoCommit(false);
 
-						PreparedStatement preparedStatement = c.prepareStatement("SELECT * from pg_roles;");
+						PreparedStatement preparedStatement = c.prepareStatement("SELECT * from pnpo_test;");
 
 						preparedStatement.execute();
 
@@ -205,7 +212,20 @@ public class TestDatabaseConnectionPool {
 		Assert.assertTrue(pool.awaitTermination(0, null));
 		latch.await();
 
-		Assert.assertEquals(20, poolBeenShutdown.get() + serviceBeenShutdown.get());
+		Assert.assertEquals(100, poolBeenShutdown.get() + serviceBeenShutdown.get());
+
+		DatabaseConnectionPool tempPool = new DatabaseConnectionPool(1);
+		tempPool.startup();
+		Connection tempC = tempPool.getConnection();
+		tempC.setAutoCommit(false);
+		PreparedStatement tempPreparedStatement = tempC.prepareStatement("DROP TABLE pnpo_test;");
+		tempPreparedStatement.execute();
+		tempC.commit();
+		tempC.close();
+		tempPool.startup();
+
+		tempPool.shutdown();
+		tempPool.awaitTermination(-1, null);
 	}
 
 }
