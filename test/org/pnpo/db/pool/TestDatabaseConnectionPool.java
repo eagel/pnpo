@@ -169,6 +169,7 @@ public class TestDatabaseConnectionPool {
 		PreparedStatement preparedStatement = c
 				.prepareStatement("CREATE TABLE IF NOT EXISTS pnpo_test(id int primary key, name varchar(256))");
 		preparedStatement.execute();
+		c.commit();
 		c.close();
 
 		for (int i = 0; i < 100; i++) {
