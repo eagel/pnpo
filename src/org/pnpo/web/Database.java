@@ -6,29 +6,30 @@ import java.sql.Statement;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
-import javax.sql.ConnectionEvent;
-import javax.sql.ConnectionEventListener;
-import javax.sql.ConnectionPoolDataSource;
-import javax.sql.PooledConnection;
 
 import org.pnpo.PNPO;
-import org.postgresql.ds.PGConnectionPoolDataSource;
+import org.pnpo.db.pool.DatabaseConnectionPool;
 
 public class Database extends HttpServlet {
 	private static final long serialVersionUID = 2460919096215614297L;
-
-	private static ConnectionPoolDataSource connectionPoolDataSource;
+	private static DatabaseConnectionPool pool;
 
 	@Override
 	public void init() throws ServletException {
-		PGConnectionPoolDataSource pgConnectionPoolDataSource = new PGConnectionPoolDataSource();
-		pgConnectionPoolDataSource.setUrl("jdbc:postgresql://localhost:5432/root");
-		pgConnectionPoolDataSource.setUser("root");
-		pgConnectionPoolDataSource.setPassword("root");
-		pgConnectionPoolDataSource.setApplicationName("web");
-		pgConnectionPoolDataSource.setDefaultAutoCommit(false);
-		connectionPoolDataSource = pgConnectionPoolDataSource;
+		try {
+			Class.forName("org.postgresql.Driver");
+		} catch (ClassNotFoundException e) {
+			throw new ServletException(e);
+		}
 
+		pool = new DatabaseConnectionPool(10);
+		try {
+			pool.startup();
+		} catch (IllegalStateException e) {
+			throw new ServletException(e);
+		} catch (SQLException e) {
+			throw new ServletException(e);
+		}
 		try {
 			Connection connection = getConnection();
 
@@ -65,36 +66,27 @@ public class Database extends HttpServlet {
 
 	@Override
 	public void destroy() {
-		connectionPoolDataSource = null;
+		pool.shutdown();
+		try {
+			pool.awaitTermination(-1, null);
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+		pool = null;
 	}
 
 	public static Connection getConnection() throws SQLException {
-		PooledConnection pooledConnection = connectionPoolDataSource.getPooledConnection();
-
-		pooledConnection.addConnectionEventListener(new ConnectionEventListener() {
-
-			@Override
-			public void connectionErrorOccurred(ConnectionEvent event) {
-				PooledConnection pooledConnection = (PooledConnection) event.getSource();
-				try {
-					pooledConnection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-
-			@Override
-			public void connectionClosed(ConnectionEvent event) {
-				PooledConnection pooledConnection = (PooledConnection) event.getSource();
-				try {
-					pooledConnection.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		});
-
-		return pooledConnection.getConnection();
+		try {
+			Connection connection = pool.getConnection();
+			connection.setAutoCommit(false);
+			return connection;
+		} catch (IllegalStateException e) {
+			throw new SQLException(e);
+		} catch (InterruptedException e) {
+			throw new SQLException(e);
+		}
 	}
 
 }
