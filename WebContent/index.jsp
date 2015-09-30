@@ -9,16 +9,10 @@
 
 <link rel="stylesheet" href="css/bootstrap.min.css">
 <link rel="stylesheet" href="css/bootstrap-theme.min.css">
-<script src="js/jquery-2.1.1.min.js"></script>
-<script src="js/bootstrap.min.js"></script>
-
-<script src="js/angular.min.js"></script>
-<script src="js/angular-route.min.js"></script>
 
 <link rel="stylesheet" href="app/index/index.css">
-<script src="app/index/index.js"></script>
 </head>
-<body background="images/littleSheep.jpg">
+<body>
 	<nav class="navbar navbar-inverse navbar-fixed-top">
 		<div class="container">
 			<div class="navbar-header">
@@ -29,7 +23,7 @@
 						class="icon-bar"></span> <span class="icon-bar"></span> <span
 						class="icon-bar"></span>
 				</button>
-				<a class="navbar-brand" href="#">PNPO</a>
+				<a class="navbar-brand" href="">PNPO</a>
 			</div>
 			<div id="navbar" class="collapse navbar-collapse">
 				<ul class="nav navbar-nav">
@@ -39,16 +33,26 @@
 			<!--/.nav-collapse -->
 		</div>
 	</nav>
-	<div ng-view class="container"></div>
-	<footer style="width: 1024px; margin: 0px auto 0px auto">
-		<div style="display: block; float: left;">
-			<a href="https://github.com/eagel/pnpo/wiki">PNPO Open Source
-				Project</a>
-		</div>
-		<div style="display: block; float: right;">
-			Version:&nbsp;
-			<%=PNPO.VERSION%></div>
-		<div style="clear: both;"></div>
-	</footer>
+	<div class="container">
+		<div ng-view></div>
+		<footer class="footer">
+			<div style="display: block; float: left;">
+				<a href="https://github.com/eagel/pnpo/wiki">PNPO Open Source
+					Project</a>
+			</div>
+			<div style="display: block; float: right;">
+				Version:&nbsp;
+				<%=PNPO.VERSION%></div>
+			<div style="clear: both;"></div>
+		</footer>
+	</div>
+
+	<script src="js/jquery-2.1.1.min.js"></script>
+	<script src="js/bootstrap.min.js"></script>
+
+	<script src="js/angular.min.js"></script>
+	<script src="js/angular-route.min.js"></script>
+
+	<script src="app/index/index.js"></script>
 </body>
 </html>

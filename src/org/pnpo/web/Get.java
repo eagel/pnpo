@@ -22,6 +22,7 @@ public class Get extends HttpServlet {
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 		Connection connection = null;
+		List<Map<String, String>> data = null;
 		try {
 			connection = Database.getConnection();
 
@@ -31,7 +32,7 @@ public class Get extends HttpServlet {
 
 			ResultSet resultSet = statement.getResultSet();
 
-			List<Map<String, String>> data = new ArrayList<Map<String, String>>();
+			data = new ArrayList<Map<String, String>>();
 
 			while (resultSet.next()) {
 				Map<String, String> entry = new HashMap<String, String>();
@@ -41,8 +42,6 @@ public class Get extends HttpServlet {
 
 				data.add(entry);
 			}
-
-			request.setAttribute("data", data);
 
 			connection.commit();
 
@@ -60,6 +59,32 @@ public class Get extends HttpServlet {
 				e.printStackTrace();
 			}
 		}
-		request.getRequestDispatcher("WEB-INF/pages/get.jsp").forward(request, response);
+
+		StringBuilder stringBuilder = new StringBuilder();
+
+		stringBuilder.append("[");
+		boolean first = true;
+		for (Map<String, String> message : data) {
+			if (!first) {
+				stringBuilder.append(",");
+			} else {
+				first = false;
+			}
+			stringBuilder.append("{\"id\":");
+			stringBuilder.append(message.get("id"));
+			stringBuilder.append(",");
+			stringBuilder.append("\"data\":");
+			stringBuilder.append("\"");
+			stringBuilder.append(message.get("data").replaceAll("\"", "\\\\\""));
+			stringBuilder.append("\"");
+			stringBuilder.append("}");
+		}
+		stringBuilder.append("]");
+
+		response.setCharacterEncoding("UTF-8");
+		response.setContentType("application/json; charset=UTF-8");
+
+		response.getWriter().write(stringBuilder.toString());
+		response.getWriter().close();
 	}
 }
