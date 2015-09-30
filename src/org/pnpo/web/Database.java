@@ -1,8 +1,11 @@
 package org.pnpo.web;
 
 import java.sql.Connection;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -13,12 +16,25 @@ import org.pnpo.db.pool.DatabaseConnectionPool;
 public class Database extends HttpServlet {
 	private static final long serialVersionUID = 2460919096215614297L;
 	private static DatabaseConnectionPool pool;
+	private static Driver driver;
 
 	@Override
 	public void init() throws ServletException {
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
+			throw new ServletException(e);
+		}
+
+		for (Driver d : Collections.list(DriverManager.getDrivers())) {
+			if (d.getClass().equals(org.postgresql.Driver.class)) {
+				driver = d;
+			}
+		}
+
+		try {
+			DriverManager.registerDriver(driver);
+		} catch (SQLException e) {
 			throw new ServletException(e);
 		}
 
@@ -75,6 +91,13 @@ public class Database extends HttpServlet {
 			e.printStackTrace();
 		}
 		pool = null;
+
+		try {
+			DriverManager.deregisterDriver(driver);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		driver = null;
 	}
 
 	public static Connection getConnection() throws SQLException {
