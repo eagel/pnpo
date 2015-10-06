@@ -10,13 +10,23 @@ angular.module('index', [ 'ngRoute', 'indexControllers' ]).config(
 			});
 		} ]);
 
-angular.module('indexControllers', []).controller('index',
-		[ '$scope', '$http', function($scope, $http) {
-			$http({
-				method : 'GET',
-				url : 'get'
-			}).then(function(response) {
-				$scope.data = response.data;
-			}, function(response) {
-			});
-		} ])
+angular.module('indexControllers', []).controller(
+		'index',
+		[
+				'$scope',
+				'$http',
+				"$sce",
+				function($scope, $http, $sce) {
+					$http({
+						method : 'GET',
+						url : 'get'
+					}).then(
+							function(response) {
+								$scope.data = response.data;
+								for (i in $scope.data) {
+									$scope.data[i].data = $sce
+											.trustAsHtml($scope.data[i].data);
+								}
+							}, function(response) {
+							});
+				} ])

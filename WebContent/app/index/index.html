@@ -12,6 +12,5 @@
 	</script>
 
 	<div class="list-group-item" style="text-align: center;"
-		ng-repeat="message in data">{{message.data}}</div>
+		ng-repeat="message in data" ng-bind-html="message.data"></div>
 </div>
-
