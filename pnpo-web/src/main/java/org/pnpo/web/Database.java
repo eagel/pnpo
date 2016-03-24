@@ -8,11 +8,13 @@ import java.sql.Statement;
 import java.util.Collections;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 
 import org.pnpo.PNPO;
 import org.pnpo.db.pool.DatabaseConnectionPool;
 
+@WebServlet(name = "database", loadOnStartup = 1, value = {})
 public class Database extends HttpServlet {
 	private static final long serialVersionUID = 2460919096215614297L;
 	private static DatabaseConnectionPool pool;

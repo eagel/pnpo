@@ -4,7 +4,7 @@
 
   <groupId>org.pnpo</groupId>
   <artifactId>pnpo</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <version>0.0.2-M2</version>
   <packaging>pom</packaging>
 
   <name>pnpo</name>

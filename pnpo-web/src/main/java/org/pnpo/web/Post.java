@@ -8,10 +8,12 @@ import java.sql.SQLException;
 import java.sql.Statement;
 
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+@WebServlet(name = "post", urlPatterns = "/post")
 public class Post extends HttpServlet {
 	private static final long serialVersionUID = 8808293686192061803L;
 
@@ -52,7 +54,6 @@ public class Post extends HttpServlet {
 
 				connection.commit();
 
-
 			} catch (SQLException e) {
 				try {
 					connection.rollback();
@@ -60,7 +61,7 @@ public class Post extends HttpServlet {
 					e1.printStackTrace();
 				}
 				throw new ServletException(e);
-			}finally {
+			} finally {
 				try {
 					connection.close();
 				} catch (SQLException e) {
