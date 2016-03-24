@@ -19,7 +19,7 @@ angular.module('indexControllers', []).controller(
 				function($scope, $http, $sce) {
 					$http({
 						method : 'GET',
-						url : 'get'
+						url : 'requests/index/get'
 					}).then(
 							function(response) {
 								$scope.data = response.data;
