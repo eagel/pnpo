@@ -16,13 +16,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @WebServlet(name = "get", urlPatterns = { "/get" })
 public class Get extends HttpServlet {
 	private static final long serialVersionUID = 3375775372535909378L;
-
+	private static final Logger logger = LoggerFactory.getLogger(Get.class);
+	
+	
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		logger.debug("request");
 		Connection connection = null;
 		List<Map<String, String>> data = null;
 		try {

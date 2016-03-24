@@ -13,13 +13,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @WebServlet(name = "post", urlPatterns = "/post")
 public class Post extends HttpServlet {
 	private static final long serialVersionUID = 8808293686192061803L;
+	private static final Logger logger = LoggerFactory.getLogger(Post.class);
 
 	@Override
 	protected void service(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		logger.debug("request");
 		request.setCharacterEncoding("UTF-8");
 
 		if (request.getParameter("data") != null && !request.getParameter("data").equals("")) {

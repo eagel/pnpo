@@ -13,15 +13,20 @@ import javax.servlet.http.HttpServlet;
 
 import org.pnpo.PNPO;
 import org.pnpo.db.pool.DatabaseConnectionPool;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebServlet(name = "database", loadOnStartup = 1, value = {})
 public class Database extends HttpServlet {
+	private static final Logger logger = LoggerFactory.getLogger(Database.class);
+
 	private static final long serialVersionUID = 2460919096215614297L;
 	private static DatabaseConnectionPool pool;
 	private static Driver driver;
 
 	@Override
 	public void init() throws ServletException {
+		logger.info("initialize");
 		try {
 			Class.forName("org.postgresql.Driver");
 		} catch (ClassNotFoundException e) {
@@ -84,6 +89,7 @@ public class Database extends HttpServlet {
 
 	@Override
 	public void destroy() {
+		logger.info("destroy");
 		pool.shutdown();
 		try {
 			pool.awaitTermination(-1, null);
@@ -103,6 +109,7 @@ public class Database extends HttpServlet {
 	}
 
 	public static Connection getConnection() throws SQLException {
+		logger.debug("getConnection");
 		try {
 			Connection connection = pool.getConnection();
 			connection.setAutoCommit(false);
