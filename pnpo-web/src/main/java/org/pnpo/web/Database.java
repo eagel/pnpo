@@ -70,7 +70,7 @@ public class Database extends HttpServlet {
 				// update the installation information
 				statement.execute("UPDATE pnpo_installation SET name = '" + "PNPO" + "', major = '" + PNPO.MAJOR_VERSION
 						+ "', minor = '" + PNPO.MINOR_VERSION + "', micro = '" + PNPO.MICRO_VERSION + "',qualifier = '"
-						+ PNPO.QUALIFIER_VERSION + "'  WHERE id = 1");
+						+ PNPO.QUALIFIER_VERSION + "'  WHERE id = 0");
 			} else {
 				// insert the installation information
 				statement.execute("INSERT INTO pnpo_installation VALUES ( " + 0 + ", 'PNPO', " + PNPO.MAJOR_VERSION
