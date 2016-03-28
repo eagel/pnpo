@@ -18,9 +18,9 @@ import org.pnpo.web.Database;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.view.RedirectView;
@@ -31,7 +31,7 @@ public class IndexController {
 	private static final Logger logger = LoggerFactory.getLogger(IndexController.class);
 
 	@RequestMapping(path = "post", method = RequestMethod.POST)
-	public ModelAndView post(@MatrixVariable String data, ModelAndView modelAndView)
+	public ModelAndView post(@RequestParam String data, ModelAndView modelAndView)
 			throws UnsupportedEncodingException, SQLException {
 		logger.debug("post");
 		if (data != null && !data.equals("")) {
@@ -83,10 +83,10 @@ public class IndexController {
 		modelAndView.setView(new RedirectView("../../"));
 		return modelAndView;
 	}
-	
+
 	@RequestMapping(path = "get", method = RequestMethod.GET)
-	public ModelAndView get(ModelAndView modelAndView) throws UnsupportedEncodingException, SQLException{
-		
+	public ModelAndView get(ModelAndView modelAndView) throws UnsupportedEncodingException, SQLException {
+
 		Connection connection = null;
 		List<Map<String, String>> data = null;
 		try {
@@ -146,9 +146,9 @@ public class IndexController {
 			stringBuilder.append("}");
 		}
 		stringBuilder.append("]");
-		
+
 		modelAndView.setView(new View() {
-			
+
 			@Override
 			public void render(Map<String, ?> model, HttpServletRequest request, HttpServletResponse response)
 					throws Exception {
@@ -156,7 +156,7 @@ public class IndexController {
 				response.getWriter().write(stringBuilder.toString());
 				response.getWriter().close();
 			}
-			
+
 			@Override
 			public String getContentType() {
 				return "application/json; charset=UTF-8";
